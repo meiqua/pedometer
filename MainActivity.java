@@ -68,6 +68,7 @@ final double[] FilterParams={-0.038863591290741892,
         ,0.58926375876501835,0.28886359129074191
         ,-0.071472482469963419,-0.038863591290741892};
     public boolean FilterFlag=false;
+    public boolean updatePedometerFlag=false;
     //number of params must equal to order+1
 
     public int[] AverageArray0 = new int[size];
@@ -98,7 +99,7 @@ final double[] FilterParams={-0.038863591290741892,
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
             public void onDataReceived(byte[] data, String message) {
                 TextView textView = (TextView) findViewById(R.id.textView);
-
+                TextView pedoView=(TextView)findViewById(R.id.pedometer);
                 Model model = new Model();
                 fenPin++;
                 if (fenPin%fenPinConst==0)
@@ -116,6 +117,10 @@ final double[] FilterParams={-0.038863591290741892,
                     if (PedoFlag)
                     Pedometer();
                     fenPin=0;
+                    if (updatePedometerFlag){
+                        pedoView.setText("step:  "+Integer.toString(pedometer));
+                        updatePedometerFlag=false;
+                    }
                 }
 
             }
@@ -158,10 +163,11 @@ final double[] FilterParams={-0.038863591290741892,
             chartFlag++;
             if (chartFlag>1)
                 chartFlag=2;
-            if (chartFlag==1)
-            new ChartTask().execute();
-            //make the task only execute once
-            PedoFlag=true;
+            if (chartFlag==1){
+                new ChartTask().execute();
+                //make the task only execute once
+                PedoFlag=true;
+            }
             pedometer=0;
         }
 
@@ -240,10 +246,11 @@ final double[] FilterParams={-0.038863591290741892,
                         values[0]=Array[i]+"";
                         publishProgress(values);
                         i++;
-                        updateFlag=true;
                     } while(i<updateNum);
                     counterLag=counter;
                     Thread.sleep(150);
+                    updatePedometerFlag=true;
+                    updateFlag=true;
                 } catch (Exception e) {
 
                 }
@@ -408,16 +415,12 @@ final double[] FilterParams={-0.038863591290741892,
         }
     }
     private void Pedometer(){
-        TextView pedoView=(TextView)findViewById(R.id.pedometer);
-        String stepString="step:  ";
-        int stepCounter=PedometerCounterLag;
-        int step=0;
-        int length=0;
-        int start=PedometerCounterLag;
-        int end=counter;
-
         if (counter%refreshTime==0){
-//           FindStepsBetween(PedometerCounterLag,counter,TempArray0,TempArray1);
+       //     int stepCounter=PedometerCounterLag;
+            int step=0;
+            int length=0;
+            int start=PedometerCounterLag;
+            int end=counter;
             int[] TempArray0 = Array0;
             int[] TempArray1 = Array1;
             if (FilterFlag){
@@ -431,9 +434,9 @@ final double[] FilterParams={-0.038863591290741892,
             }
 
             if(end>start){
-                length=end-start+2;
+                length=end-start+1;//include end point
             }else if (end<start){
-                length=end-start+2+size;
+                length=end-start+size+1;//include end point
             }
             if (length>0){
                 int[] array=new int[length];
@@ -443,67 +446,26 @@ final double[] FilterParams={-0.038863591290741892,
                         array[i]=TempArray0[start+i];
                     }else if (start+i>=half){
                         if (start+i>size-1){
-                            array[i]=TempArray1[start+i-size];
+                            array[i]=TempArray0[start+i-size];
                         }else
                             array[i]=TempArray1[start+i-half];
                     }
                 }
-                for (int i=1;i<length-1;i++){
-                    if ((array[i]-array[i-1])>0&&(array[i]-array[i+1])>0){
-                        if (array[i]>amplitude){
+                for (int i=1;i<length;i++){
+                    //from i=i will ensure no point cover or miss
+                    if (array[i-1]<amplitude){
+                    if (array[i]>amplitude){
                             step++;
-                            stepCounter=start+i;
-                            Log.i("step", "Pedometer: "+start+"  "+end);
+                           Log.i("step", "Pedometer: "+start+"  "+end);
                         }
                     }
                 }
-                Log.i("step", "Pedometer-stepCounter: "+stepCounter);
+            //    Log.i("step", "Pedometer-stepCounter: "+stepCounter);
             }
-
-            if (stepCounter>size-1)
-                stepCounter=stepCounter-size;
-
+//            if (stepCounter>size-1)
+//                stepCounter=stepCounter-size;
             pedometer=pedometer+step;
-            PedometerCounterLag=stepCounter;
+            PedometerCounterLag=counter;
         }
-
-        stepString=stepString+pedometer;
-        pedoView.setText(stepString);
     }
-//    private void FindStepsBetween(int start,int end,int[] TempArray0 ,int[] TempArray1){
-//        int step=0;
-//        int stepCounter=0;
-//        int length=0;
-//
-//        if(end>start){
-//             length=end-start+2;
-//        }else if (end<start){
-//             length=end-start+2+size;
-//        }
-//
-//        if (length>0){
-//            int[] array=new int[length];
-//            for (int i=0;i<length;i++){
-//                if (start+i<half){
-//                    array[i]=TempArray0[start+i];
-//                }else if (start+i>=half){
-//                    array[i]=TempArray1[start+i-half];
-//                }
-//            }
-//            for (int i=1;i<length-1;i++){
-//                if ((array[i]-array[i-1])>0&&(array[i]-array[i+1])>0){
-//                    if (array[i]>amplitude){
-//                        step++;
-//                        stepCounter=start+i;
-//                    }
-//                }
-//            }
-//        }
-//
-//        if (stepCounter>size-1)
-//            stepCounter=stepCounter-size;
-//
-//        pedometer=pedometer+step;
-//        PedometerCounterLag=stepCounter;
-//    }
 }

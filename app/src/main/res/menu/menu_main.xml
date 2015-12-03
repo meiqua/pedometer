@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    <item android:id="@+id/connect" android:title="connect"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/start" android:title="start"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/FIR" android:title="FIR"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/Average" android:title="ave"
+        android:enabled="false"
+        app:showAsAction="ifRoom"/>
+</menu>

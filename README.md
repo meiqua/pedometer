@@ -9,5 +9,5 @@
   
 ##screenshot  
 
-<img src="https://github.com/meiqua/pedometer/blob/pedometer/screenshot.png" width = "360" alt="screenshot" align=center />  
+<img src="https://github.com/meiqua/pedometer/blob/pedometer/Screenshot.png" width = "360" alt="screenshot" align=center />  
   

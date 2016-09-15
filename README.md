@@ -9,7 +9,7 @@
 
 ##flchart    
 
-<img src="https://github.com/meiqua/pedometer/blob/pedometer/fchart.png" width = "360" alt="screenshot" align=center /> 
+<img src="https://github.com/meiqua/pedometer/blob/pedometer/fchart.png" width = "100%" alt="screenshot" align=center /> 
   
 ##screenshot  
 

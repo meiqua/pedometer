@@ -11,3 +11,5 @@
 
 <img src="https://github.com/meiqua/pedometer/blob/pedometer/Screenshot.png" width = "360" alt="screenshot" align=center />  
   
+ 看起来挺丑。。运行效果找不到了，计步器挂在人身上走的时候基本是个正弦样的函数。
+  
